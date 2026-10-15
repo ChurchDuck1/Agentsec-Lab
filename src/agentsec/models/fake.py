@@ -15,3 +15,16 @@ class FakeModelAdapter:
             if trigger in last:
                 return ModelResponse(text=reply, model="fake")
         return ModelResponse(text=self.default, model="fake")
+    
+class ScriptedModelAdapter:
+    #teturns pre-written responses in order
+
+    def __init__(self, script: list[ModelResponse]):
+        self.script = list(script)
+        self.calls: list[list[Message]] = []
+
+    def complete(self, messages: list[Message], system: str = "") -> ModelResponse:
+        self.calls.append(list(messages))
+        if not self.script:
+            raise RuntimeError("script exhausted")
+        return self.script.pop(0)

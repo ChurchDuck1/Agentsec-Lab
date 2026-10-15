@@ -10,6 +10,7 @@ class Message:
 class ModelResponse:
     text: str
     model: str
+    tool_call: dict | None = None
     
 class ModelAdapter(Protocol):
         def complete(self, messages: list[Message], system: str = "") -> ModelResponse: ...

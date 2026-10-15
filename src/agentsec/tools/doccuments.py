@@ -20,3 +20,20 @@ def read_doccument(doc_id: str, base_dir: Path = DOCS_DIR) -> str:
         raise DoccumentAccessError(f"file not found")
     
     return path.read_text(encoding="utf-8") #all checks pass
+
+def search_doccuments(query: str, base_dir: Path = DOCS_DIR, limit: int = 5) -> list[dict]:
+    if not isinstance(query, str) or not (1 <= len(query) <= 200):
+        raise DoccumentAccessError("invalid query")
+    q = query.lower()
+    hits = []
+    for path in sorted(base_dir.resolve().glob("*.txt")):
+        doc_id = path.stem
+        try:
+            text = read_doccument(doc_id, base_dir)  #perform same checks as read_doccument
+        except DoccumentAccessError:
+            continue   #skip if fails checks
+        if q in text.lower() or q in doc_id:
+            hits.append({"id": doc_id, "snippet": text[:80]})
+        if len(hits) >= limit:
+            break
+    return hits
