@@ -3,14 +3,22 @@ from pathlib import Path
 
 DOCS_DIR = Path(__file__).resolve().parents[3] / "fixtures" / "docs" #4 files back, and then into fixtures/docs
 _ID_PATTERN = re.compile(r"^[a-z0-9_-]{1,64}$") #prevents .. and / attacks
+ACL: dict[str, set[str]] = {
+    "welcome": {"alice", "bob"},
+    "notes": {"alice", "bob"},
+    "alice_notes": {"alice"},
+    "bob_notes": {"bob"},
+}
 
 class DoccumentAccessError(Exception):
     pass
 
-def read_doccument(doc_id: str, base_dir: Path = DOCS_DIR) -> str:
+def read_doccument(doc_id: str, user: str, base_dir: Path = DOCS_DIR,
+                  acl: dict[str, set[str]] = ACL) -> str:
     if not isinstance(doc_id, str) or not _ID_PATTERN.fullmatch(doc_id):
-        raise DoccumentAccessError(f"invalid id")
-    
+        raise DoccumentAccessError(f"invalid doccument id: {doc_id!r}")
+    if user not in acl.get(doc_id, set()):
+        raise DoccumentAccessError(f"no such doccument: {doc_id!r}")
     base = base_dir.resolve()
     path = (base / f"{doc_id}.txt").resolve()
     
@@ -21,7 +29,7 @@ def read_doccument(doc_id: str, base_dir: Path = DOCS_DIR) -> str:
     
     return path.read_text(encoding="utf-8") #all checks pass
 
-def search_doccuments(query: str, base_dir: Path = DOCS_DIR, limit: int = 5) -> list[dict]:
+def search_doccuments(query: str, user: str, base_dir: Path = DOCS_DIR, limit: int = 5) -> list[dict]:
     if not isinstance(query, str) or not (1 <= len(query) <= 200):
         raise DoccumentAccessError("invalid query")
     q = query.lower()

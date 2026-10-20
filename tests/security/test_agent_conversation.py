@@ -11,11 +11,12 @@ def test_three_step_conversation(tmp_path):
     ]
     audit = AuditLog(tmp_path / "audit.jsonl", clock=lambda: 0.0)
 
-    answer = run_agent(ScriptedModelAdapter(script), "What do the Q3 notes say?", audit)
+    answer = run_agent(ScriptedModelAdapter(script), "What do the Q3 notes say?", audit, user="alice")
 
     assert answer == "The Q3 notes say nothing secret."
     events = audit.read_all()
     assert [e["event"] for e in events] == [
+        "session_start",
         "user_message",
         "model_response", "tool_call",
         "model_response", "tool_call",
