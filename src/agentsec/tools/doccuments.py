@@ -17,8 +17,9 @@ def read_doccument(doc_id: str, user: str, base_dir: Path = DOCS_DIR,
                   acl: dict[str, set[str]] = ACL) -> str:
     if not isinstance(doc_id, str) or not _ID_PATTERN.fullmatch(doc_id):
         raise DoccumentAccessError(f"invalid doccument id: {doc_id!r}")
-    if user not in acl.get(doc_id, set()):
-        raise DoccumentAccessError(f"no such doccument: {doc_id!r}")
+    # if user not in acl.get(doc_id, set()):
+    #    raise DoccumentAccessError(f"no such doccument: {doc_id!r}")
+    #    introduce a bug to allow users improper access
     base = base_dir.resolve()
     path = (base / f"{doc_id}.txt").resolve()
     

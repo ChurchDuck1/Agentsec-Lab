@@ -1,0 +1,11 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.13.5, pytest-9.1.1, pluggy-1.6.0 -- /Users/nyess/Desktop/agentsec-lab/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/nyess/Desktop/agentsec-lab
+configfile: pyproject.toml
+plugins: anyio-4.15.1
+collecting ... ERROR: file or directory not found: tests/security/test_cross_user_read.py
+
+collected 0 items
+
+============================ no tests ran in 0.01s =============================
